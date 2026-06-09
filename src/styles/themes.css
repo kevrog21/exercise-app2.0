@@ -1,0 +1,9 @@
+[data-theme="light"] {
+    --color-text-primary: rgb(14, 6, 71);
+    --color-text-secondary: rgb(10, 107, 25);
+}
+
+[data-theme="retro"] {
+    --color-text-primary: red;
+    --color-text-secondary: rgb(154, 20, 20);
+}

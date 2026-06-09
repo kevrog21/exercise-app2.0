@@ -1,0 +1,31 @@
+
+.container-center-content {
+    display: flex;
+    height: 50vh;
+    justify-content: center;
+    align-items: center;
+}
+
+.company-wink-wink {
+  position: absolute;
+  left: -10000px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.logout-btn-container {
+  display: flex;
+  justify-content: end;
+  margin: 0 0 2em 0;
+}
+
+.form-textarea {
+  color: red;
+  border: 1px solid black;
+  padding: .5em;
+  margin: .5em;
+  line-height: 1em;
+  font-size: .75em;
+}

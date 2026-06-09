@@ -1,25 +1,29 @@
-import logo from './logo.svg';
-import './App.css';
+import { Routes, Route, Navigate } from "react-router-dom"
+import { useAuth } from "./context/AuthContext"
+
+import LandingPage from "./components/LandingPage"
+import Login from "./components/Auth/Login"
+import SignUp from "./components/Auth/SignUp"
+import UserMainDashboard from "./components/UserMainDashboard"
+
+import ProtectedRoute from "./routes/ProtectedRoutes"
 
 function App() {
+  const { user, authLoading } = useAuth()
+
+  if (authLoading) return <div>Loading...</div>
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <Routes>
+      <Route path='/' element={<LandingPage /> }/>
+      <Route path='/login' element={<Login /> }/>
+      <Route path='/signup' element={<SignUp /> }/>
+
+      <Route element={<ProtectedRoute />}>
+        <Route path='/dashboard' element={<UserMainDashboard />}/>
+      </Route>
+    </Routes>
+  )
 }
 
 export default App;
