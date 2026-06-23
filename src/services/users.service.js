@@ -1,5 +1,5 @@
 import { apiFetch } from "./api"
 
- export function getCurrentUserService() {
+export function getCurrentUserService() {
     return apiFetch(`/api/current-user`)
 }
