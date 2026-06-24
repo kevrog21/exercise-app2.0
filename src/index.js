@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom'
 import reportWebVitals from './reportWebVitals';
 import { AuthProvider } from "./context/AuthContext"
 import { ThemeProvider } from './context/ThemeContext';
+import { FitnessProfileProvider } from './context/FitnessProfileContext';
 import "./styles/reset.css";
 import "./styles/tokens.css";
 import "./styles/themes.css";
@@ -16,9 +17,11 @@ root.render(
   <React.StrictMode>
     <BrowserRouter>
       <AuthProvider>
-        <ThemeProvider>
-          <App />
-        </ThemeProvider>
+        <FitnessProfileProvider>
+          <ThemeProvider>
+            <App />
+          </ThemeProvider>
+        </FitnessProfileProvider>
       </AuthProvider> 
     </BrowserRouter>
   </React.StrictMode>
