@@ -2,7 +2,6 @@ import { Link, Outlet } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { useFitnessProfileContext } from "../context/FitnessProfileContext.jsx"
 
-import LogOut from './Auth/LogOut'
 
 export default function UserMainDashboard() {
 
@@ -15,9 +14,7 @@ export default function UserMainDashboard() {
     } else {
         return (
             <div className='page'>
-                <LogOut />
-                <p className='page-title'>You made it! I am the fitness user dashboard beep boop bop</p>
-                <p>go to user profile -</p>
+                <p className='page-title'>dashboard</p>
                 <p>current user: {currentProfile?.userId}</p>
                 <p>level: {currentProfile?.currentLevel}</p>
                 <p>streak: {currentProfile?.currentStreak}</p>

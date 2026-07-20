@@ -15,12 +15,6 @@
   overflow: hidden;
 }
 
-.logout-btn-container {
-  display: flex;
-  justify-content: end;
-  margin: 0 0 2em 0;
-}
-
 .form-textarea {
   color: red;
   border: 1px solid black;

@@ -9,7 +9,7 @@ import LandingPage from "./components/LandingPage"
 import Login from "./components/Auth/Login"
 import SignUp from "./components/Auth/SignUp"
 import UserMainDashboard from "./components/UserMainDashboard.jsx"
-import CustomizeDailyRoutine from "./components/CustomizeDailyRoutine.jsx"
+import CustomizeDailyRoutine from "./components/DailyRoutine/CustomizeDailyRoutine.jsx"
 
 import ProtectedRoute from "./routes/ProtectedRoutes"
 

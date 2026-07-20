@@ -74,3 +74,24 @@ select {
 .page-title {
   text-align: center;
 }
+
+/* header */
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1vw;
+  border-bottom: 2px solid #a8c4e2;
+}
+
+header h1 {
+  margin: 0;
+  padding: 0;
+  font-size: 1.2rem;
+}
+
+header h1 a {
+  color: #57708a;
+  text-decoration: none;
+}
