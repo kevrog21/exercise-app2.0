@@ -25,7 +25,7 @@ h3 {
 
 /* Text elements */
 p {
-  line-height: 1.6;
+
 }
 
 /* Links */
@@ -65,10 +65,20 @@ select {
 }
 
 .page {
-  margin: 100px;
   display: flex;
   flex-direction: column;
   justify-content: center;
+}
+
+.outlet-wrapper {
+  background: #f0faff;
+  height: 100%;
+}
+
+.main-layout {
+  position: relative;
+  min-height: calc(100vh - (1.4rem + 2vw + 5px));
+  padding: 10vh 0 0 10vh;
 }
 
 .page-title {
@@ -89,6 +99,7 @@ header h1 {
   margin: 0;
   padding: 0;
   font-size: 1.2rem;
+  line-height: 1.4rem;
 }
 
 header h1 a {

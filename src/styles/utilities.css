@@ -1,3 +1,23 @@
+.text-small {
+  font-size: .85rem;
+}
+
+.secondary-btn {
+  background: #66869e;
+  color: white;
+  border: none;
+  padding: .3em 1.75em;
+  transition: .2s all ease;
+}
+
+.secondary-btn:hover {
+    background: rgb(84, 109, 118);
+}
+
+.secondary-btn:disabled {
+  background: #d9e6f4;
+  color: #a7c0d8;
+}
 
 .container-center-content {
     display: flex;

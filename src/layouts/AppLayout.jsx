@@ -7,9 +7,13 @@ function AppLayout() {
   return (
     <>
       <Header />
-      <main>
-        <div className="main-content"><Outlet /></div>
+      <main className="main-layout">
+        <section className="content-panel">
+            <div className="outlet-wrapper"><Outlet /></div>
+        </section>
+        
         <UsersBuilding />
+
       </main>
     </>
   )

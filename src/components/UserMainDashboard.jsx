@@ -2,6 +2,8 @@ import { Link, Outlet } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { useFitnessProfileContext } from "../context/FitnessProfileContext.jsx"
 
+import "../styles/pageStyles/dashboardStyles.css"
+
 
 export default function UserMainDashboard() {
 

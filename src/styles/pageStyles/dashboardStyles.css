@@ -1,0 +1,51 @@
+.content-panel {
+    background: #d9e6f4;
+    border: 2px solid #a8c4e2;
+    width: 40vw;
+    height: 70vh;
+    border-radius: 12px;
+    overflow-y: auto;
+    z-index: 5;
+
+    scrollbar-width: thin;
+    scrollbar-color: #bdcfe0 transparent;
+}
+
+.content-panel::-webkit-scrollbar {
+    width: 8px;
+}
+
+.content-panel::-webkit-scrollbar-track {
+    width: 10px;
+    background: transparent;
+}
+
+.content-panel::-webkit-scrollbar-thumb {
+    width: 10px;
+    background: #bdcfe0;
+    border-radius: 999px;
+}
+
+/* .world-panel {
+    background: red;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    transform: translateY(-20vh);
+    z-index: -999;
+} */
+
+.building-background {
+    position: absolute;
+    right: 13vw;
+    background: #d36216;
+    width: 25vw;
+    text-align: center;
+    margin: auto 0 0 55vw;
+}
+
+@media screen and (min-width: 1500px) {
+   .content-panel {
+        width: 33vw;
+    }
+}

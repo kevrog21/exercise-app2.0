@@ -3,7 +3,7 @@ import { useFitnessProfileContext } from "../../context/FitnessProfileContext.js
 import ChooseRoutineMode from "./ChooseRoutineMode.jsx"
 import SuggestedRoutinePrompt from "./SuggestedRoutinePrompt.jsx"
 import DailyRoutineLiveEditor from "./DailyRoutineLiveEditor.jsx"
-import "../../styles/pageStyles/tempEditRoutineStyles.css"
+import "../../styles/pageStyles/dailyRoutineStyles.css"
 
 export default function CustomizeDailyRoutine() {
 
@@ -17,10 +17,9 @@ export default function CustomizeDailyRoutine() {
         EDITOR: "editor",
     }
 
-    const [setupStep, setSetupStep] = useState(SETUP_STEPS.MODE)
-
-
-    const [exerciseEls, setExerciseEls] = useState()
+    const [setupStep, setSetupStep] = useState(null)
+    const [currentModeSelectionTitle, setCurrentModeSelectionTitle] = useState(null)
+    const [expandedExerciseIndex, setExpandedExerciseIndex] = useState(null)
     const [formErrors, setFormErrors] = useState([])
 
     const hasRoutine = currentProfile?.currentDailyRoutine.length > 0
@@ -36,25 +35,6 @@ export default function CustomizeDailyRoutine() {
         exercises: []
     })
 
-    // const [formData, setFormData] = useState([
-    //         {
-    //             exerciseName: 'push-ups',
-    //             dailyIncrement: 1,
-    //             unit: 'reps',
-    //             maxReps: ''
-    //         },{
-    //             exerciseName: 'sit-ups',
-    //             dailyIncrement: 1,
-    //             unit: 'reps',
-    //             maxReps: ''
-    //         },{
-    //             exerciseName: 'pull ups',
-    //             dailyIncrement: .5,
-    //             unit: 'reps',
-    //             maxReps: ''
-    //         }
-    //     ])
-
     const handleTempFormDataChange = (e) => {
         const { name, value } = e.target
         
@@ -64,38 +44,47 @@ export default function CustomizeDailyRoutine() {
         }))
     }
 
-    
-
-    const handleInputChange = (index, event) => {
-        const { name, value } = event.target
-        const newFormData = [...formData]
-        console.log('the index of the item being updated is ... ', index)
-        if (name === 'dailyIncrement' || name === 'maxReps') {
-            newFormData[index + 1][name] = value === '' ? '' : Number(value)
-        } else {
-            if (name === 'challengeMode') {
-                newFormData[index] = { [name]: value }
-            } else {
-                newFormData[index + 1][name] = value
-            }
-        }
-        console.log('new data: ', newFormData)
-        
-        setFormData(newFormData)
+    const handleCancelClick = () => {
+        setIsEditing(false)
+        setExpandedExerciseIndex(null)
+        setRoutineFormData({
+            mode: "",
+            useSuggestedRoutine: null,
+            exercises: []
+        })
     }
+
+    const suggestedExercisesSeed = [
+        {
+            exerciseName: "Push Ups",
+            progressionRate: 1,
+            unitType: "reps"
+        },
+        {
+            exerciseName: "Sit Ups",
+            progressionRate: 1,
+            unitType: "reps"
+        },
+        {
+            exerciseName: "Leg Lifts",
+            progressionRate: 1,
+            unitType: "reps"
+        }
+    ]
 
 
     if (!hasRoutine && isEditing) {
-        console.log()
                 switch (setupStep) {
                     case SETUP_STEPS.MODE:
                         return <ChooseRoutineMode 
                             SETUP_STEPS={SETUP_STEPS}
                             setupStep={setupStep}
                             setSetupStep={setSetupStep}
-                            setIsEditing={setIsEditing}
                             routineFormData={routineFormData}
                             setRoutineFormData={setRoutineFormData}
+                            handleCancelClick={handleCancelClick}
+                            currentModeSelectionTitle={currentModeSelectionTitle}
+                            setCurrentModeSelectionTitle={setCurrentModeSelectionTitle}
                         />
                     
                     case SETUP_STEPS.SUGGESTED:
@@ -103,9 +92,10 @@ export default function CustomizeDailyRoutine() {
                             SETUP_STEPS={SETUP_STEPS}
                             setupStep={setupStep}
                             setSetupStep={setSetupStep}
-                            setIsEditing={setIsEditing}
+                            handleCancelClick={handleCancelClick}
                             routineFormData={routineFormData}
                             setRoutineFormData={setRoutineFormData}
+                            currentModeSelectionTitle={currentModeSelectionTitle}
                         />
 
                     case SETUP_STEPS.EDITOR:
@@ -113,7 +103,11 @@ export default function CustomizeDailyRoutine() {
                             SETUP_STEPS={SETUP_STEPS}
                             setupStep={setupStep}
                             setSetupStep={setSetupStep}
-                            setIsEditing={setIsEditing}
+                            handleCancelClick={handleCancelClick}
+                            routineFormData={routineFormData}
+                            setRoutineFormData={setRoutineFormData}
+                            expandedExerciseIndex={expandedExerciseIndex}
+                            setExpandedExerciseIndex={setExpandedExerciseIndex}
                         />
 
                     default:
@@ -126,43 +120,27 @@ export default function CustomizeDailyRoutine() {
 
 
     return (
-        <div className='page'>
-            <div>customize routine! current routine: {currentProfile?.userId}</div>
+        <div className='routine-wrapper'>
+            <h2 className="routine-card-title">Current Routine</h2>
+            <p className="text-small routine-explainer-text">These are the exercises you'll complete each day as your level increases.</p>
 
             {!hasRoutine && !isEditing &&
-                <div>
-                    <div>no routine set</div>
-                    <button onClick={() => {
-                        setIsEditing(true)
-                        setSetupStep(SETUP_STEPS.MODE)
-                    }}>set your routine</button>
+                <div className="routine-empty-state">
+                    <div className="empty-card">
+                        <h3>No Routine Set</h3>
+                    </div>
+                    <p>Create your first routine to begin your daily challenge.</p>
                 </div>
             }
 
-            
+            <button 
+                className="routine-main-button"
+                onClick={() => {
+                    setIsEditing(true)
+                    setSetupStep(SETUP_STEPS.MODE)
+            }}>Create Routine</button>
 
-            {isEditing && 
-                <div>
-                    <form>
-                        <label htmlFor='challengeMode' className=''>Challenge Mode:</label>
-                            <select className='challenge-mode-select' name='challengeMode'>
-                                <option value=''>please select...</option>
-                                <option value='weighted-triad'>Weighted Triad</option>
-                                <option value='tiers'>Tiers</option>
-                                <option value='steady-increment'>Steady Increment</option>
-                            </select>
-                    </form>
-                </div>
-            }
-
-            { hasRoutine && !isEditing &&
-                <button onClick={() => {
-                setIsEditing(true)
-                setSetupStep(1)
-                }}>edit</button>
-            }
-
-            <button onClick={() => console.log(routineFormData)}>temp log form data button</button>
+            {/* <button onClick={() => console.log(routineFormData)}>temp log form data button</button> */}
 
         </div>
     )
