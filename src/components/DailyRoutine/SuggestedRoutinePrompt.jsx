@@ -2,49 +2,10 @@ import "../../styles/pageStyles/dailyRoutineStyles.css"
 
 export default function SuggestedRoutinePrompt(props) {
 
-        const suggestedExercisesSeed = [
-        {
-            exerciseName: "Push Ups",
-            progressionRate: 1,
-            unitType: "reps"
-        },
-        {
-            exerciseName: "Crunches",
-            progressionRate: 1,
-            unitType: "reps"
-        },
-        {
-            exerciseName: "Leg Lifts",
-            progressionRate: 1,
-            unitType: "reps"
-        },
-        {
-            exerciseName: "Scissor Kicks",
-            progressionRate: 1,
-            unitType: "reps"
-        },
-        {
-            exerciseName: "Pull Ups",
-            progressionRate: .5,
-            unitType: "reps"
-        },
-        {
-            exerciseName: "Plank",
-            progressionRate: 1.5,
-            unitType: "seconds"
-        },
-        {
-            exerciseName: "Burpies",
-            progressionRate: .5,
-            unitType: "reps"
-        }
-    ]
-
     const handleSuggestedChange = (e) => {
         props.setRoutineFormData(current => ({
             ...current,
             useSuggestedRoutine: e.target.value === "true",
-            exercises: e.target.value === "true" ? suggestedExercisesSeed : []
         }))
     }
     

@@ -15,7 +15,7 @@ export default function UserMainDashboard() {
         )
     } else {
         return (
-            <div className='page'>
+            <div >
                 <p className='page-title'>dashboard</p>
                 <p>current user: {currentProfile?.userId}</p>
                 <p>level: {currentProfile?.currentLevel}</p>

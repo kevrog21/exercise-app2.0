@@ -87,8 +87,7 @@
 
 .wizard-save-btns-wrapper {
     display: flex;
-    flex-direction: column;
-}
+    flex-direction: column;}
 
 .mode-progress-section-wrapper {
     height: 3.5em;
@@ -182,10 +181,19 @@
     cursor: pointer;
 }
 
+.live-editor-list-and-labels-container {
+    width: 100%;
+    height: 62%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .live-editor-labels-container {
     display: flex;
-    width: 86%;
+    width: 82%;
     margin: 0 auto;
+    color: #628191;
 }
 
 .live-editor-label-right {
@@ -193,18 +201,31 @@
 }
 
 .live-editor-content-wrapper {
-    height: 62%;
+    height: 80%;
     width: 100%;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     margin: .15em auto 0 auto;
     padding: 0 .25em 0 .5em;
-    overflow: auto;
+    overflow-y: scroll;
     border-radius: 8px;
     font-size: .9rem;
     line-height: 1.3em;
     color: #4c6f84;
+}
+
+.clickable-exercise-item {
+    opacity: 0;
+    transform: translateY(10px);
+    animation: fadeIn .5s forwards;
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .exercise-item-container {
@@ -238,7 +259,7 @@
     display: inline;
     margin: 0 .5em 0 0;
     transform: rotate(360deg) translateY(-.1em);
-    transition: all .35s ease;
+    transition: all .25s ease;
 }
 
 .exercise-btn-arrow.rotated {
@@ -265,6 +286,10 @@
 
 .rate-container {
     margin: auto .5em auto 0;
+}
+
+.rate-supporting-text {
+    color: #628191;
 }
 
 .not-set-container {
@@ -339,10 +364,18 @@
 
 .add-exercise-btn {
     padding: .5em;
-    margin: .5em auto 0 auto;
-    width: 85%;
+    width: 84%;
+    margin: auto;
 }
 
 .text-small {
   font-size: .85rem;
+}
+
+.error-message-container {
+    color: #cd1f1f;
+    text-align: center;
+    position: absolute;
+    transform: translateY(-100%);
+    margin: 0 10%;
 }

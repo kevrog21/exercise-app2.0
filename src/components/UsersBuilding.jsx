@@ -31,7 +31,6 @@ export default function UsersBuilding() {
     
     const buildingStyles = {
         height: `${height}vh`,
-        position: 'absolute',
         top: `${top}vh`
     }
 

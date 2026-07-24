@@ -68,6 +68,7 @@ select {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  margin: 10% 0;
 }
 
 .outlet-wrapper {
@@ -105,4 +106,103 @@ header h1 {
 header h1 a {
   color: #57708a;
   text-decoration: none;
+}
+
+
+
+
+.content-panel {
+    background: #d9e6f4;
+    border: 2px solid #a8c4e2;
+    width: 40vw;
+    height: 70vh;
+    border-radius: 12px;
+    overflow-y: auto;
+    z-index: 5;
+
+    scrollbar-width: thin;
+    scrollbar-color: #bdcfe0 transparent;
+}
+
+.building-background {
+    position: absolute;
+    right: 13vw;
+    background: #d36216;
+    width: 25vw;
+    text-align: center;
+    margin: auto 0 0 55vw;
+}
+
+@media screen and (min-width: 1600px) {
+
+  .main-layout {
+    padding: 10vh 0 0 25vh;
+  }
+
+   .content-panel {
+        width: 28vw;
+        /* color: red; */
+    }
+}
+
+@media screen and (min-width: 1100px) and (max-width: 1600px) {
+   .content-panel {
+        width: 40vw;
+        /* color: orange; */
+        padding: none;
+    }
+}
+
+@media screen and (min-width: 700px) and (max-width: 1100px) {
+   .content-panel {
+        width: 55vw;
+        /* color: purple;  */
+    }
+
+    .building-background {
+      position: static;
+      width: 65vw;
+      text-align: center;
+      margin: 2em auto;
+    }
+}
+
+@media screen and (max-width: 700px) {
+
+  .main-layout {
+    padding: 10vh 0 0 0;
+  }
+
+   .content-panel {
+        width: 75vw;
+        /* color: green; */
+        margin: 0 auto;
+    }
+
+    .building-background {
+      position: static;
+      width: 65vw;
+      text-align: center;
+      margin: 2em auto;
+  }
+}
+
+@media screen and (max-width: 550px) {
+
+  .main-layout {
+    padding: 10vh 0 0 0;
+  }
+  
+  .content-panel {
+      width: 90vw;
+      /* color: blue; */
+      margin: 0 auto;
+  }
+  
+  .building-background {
+    position: static;
+    width: 65vw;
+    text-align: center;
+    margin: 2em auto;
+  }
 }

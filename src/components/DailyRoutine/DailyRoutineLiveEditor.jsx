@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+import { useEffect, useState, useRef } from "react"
 
 import "../../styles/pageStyles/dailyRoutineStyles.css"
 
@@ -6,21 +6,43 @@ import trashIcon from "../../assets/trash-icon.svg"
 import arrow from "../../assets/arrow-icon.svg"
 import dragIcon from "../../assets/drag-icon.svg"
 
+import ErrorMessage from "../ErrorMessage"
+
 
 export default function DailyRoutineLiveEditor(props) {
 
+    const [ hasAnimatedSuggestedRoutine, setHasAnimatedSuggestedRoutine] = useState(false)
+    const exerciseListRef = useRef(null)
+
     useEffect(() => {
-        if (props.routineFormData.useSuggestedRoutine) {
-            console.log("showing suggested routine propegation animation")
-            props.setRoutineFormData(current => ({
-                ...current,
-                useSuggestedRoutine: false
-            }))
+        const timers = []
+
+        if (props.routineFormData.useSuggestedRoutine && !hasAnimatedSuggestedRoutine) {
+            
+            props.suggestedExercisesSeed.forEach((exercise, index) => {
+                const timer = setTimeout(() => {
+                    props.setRoutineFormData(current => ({
+                        ...current,
+                        exercises: [
+                            ...current.exercises,
+                            exercise,
+                        ],
+                    }))
+                }, index * 120)
+
+                timers.push(timer)
+            })
+
+            setHasAnimatedSuggestedRoutine(true)
+        }
+
+        return () => {
+            timers.forEach(clearTimeout)
         }
     }, [])
 
     useEffect(() => {
-        if (props.routineFormData.exercises.length > 0) {
+        if (props.routineFormData.exercises.length > 0 || props.routineFormData.useSuggestedRoutine) {
             return
         }
 
@@ -35,6 +57,21 @@ export default function DailyRoutineLiveEditor(props) {
             exercises: blankExercises,
         }))
     }, [])
+
+    useEffect(() => {
+        const length = props.routineFormData.exercises.length
+
+        if (props.expandedExerciseIndex >= length - 2) {
+            requestAnimationFrame(() => {
+                setTimeout(() => {
+                    exerciseListRef.current?.scrollTo({
+                    top: exerciseListRef.current.scrollHeight,
+                    behavior: "smooth",
+                    })
+                }, 120)
+            })
+        }
+    }, [props.expandedExerciseIndex, props.routineFormData.exercises.length])
 
     const updateExercise = (index, changes) => {
         props.setRoutineFormData(current => {
@@ -64,6 +101,17 @@ export default function DailyRoutineLiveEditor(props) {
                 }
             ]
         }))
+
+        requestAnimationFrame(() => {
+            exerciseListRef.current?.scrollTo({
+                top: exerciseListRef.current.scrollHeight,
+                behavior: "smooth",
+            })
+        })
+
+        // props.setExpandedExerciseIndex(
+        //     props.routineFormData.exercises.length
+        // )
     }
 
     const deleteExercise = (indexToDelete) => {
@@ -83,9 +131,71 @@ export default function DailyRoutineLiveEditor(props) {
             }
         })
     }
+
+    const validateFormData = () => {
+        const newErrors = []
+
+        props.routineFormData.exercises.forEach((exercise, index) => {
+            if (!exercise.exerciseName.trim()) {
+                newErrors.push(`A name is required for exercise ${index + 1}`)
+            }
+            if (exercise.progressionRate <= 0) {
+                newErrors.push(`A growth rate is required for ${props.routineFormData.exercises[index].exerciseName}`)
+            }
+            if (!exercise.unitType) {
+                newErrors.push(`A unit is required for exercise ${props.routineFormData.exercises[index].exerciseName}`)
+            }
+        })
+
+        const names = new Set()
+
+        props.routineFormData.exercises.forEach((exercise, index) => {
+            const normalizedName = exercise.exerciseName.trim().toLowerCase()
+            if ( !normalizedName === "" && names.has(normalizedName)) {
+                newErrors.push(
+                    `${exercise.exerciseName} is listed more than once`
+                )
+            }
+            names.add(normalizedName)
+        })
+
+        props.setFormErrors(newErrors)
+
+        return {
+            isValid: newErrors.length === 0,
+            errors: newErrors,
+        }
+    }
+
+    const payload = {
+        mode: props.routineFormData.mode,
+        exercises: props.routineFormData.exercises.map(exercise => ({
+            exerciseName: exercise.exerciseName.trim(),
+            progressionRate: Number(exercise.progressionRate),
+            unitType: exercise.unitType,
+        })),
+    }
+
+    const saveRoutine = async () => {
+
+        const validation = validateFormData()
+        console.log("errors", validation.errors)
+
+        if (!validation.isValid) {
+            return
+        }
+
+        console.log("form data", props.routineFormData)
+
+        // send request
+    }
     
     
     return <div className="routine-wrapper">
+
+        <ErrorMessage 
+            errorsToDisplay={props.formErrors}
+        />
 
         <h2 className="routine-card-title">Editing Routine...</h2>
 
@@ -111,92 +221,97 @@ export default function DailyRoutineLiveEditor(props) {
             </div>
         }
 
-        <div className="live-editor-content-wrapper">
+        <div className="live-editor-list-and-labels-container">
+
             <div className="live-editor-labels-container">
                 <p className="live-editor-label-left">exercise name</p>
                 <p className="live-editor-label-right">growth rate</p>
             </div>
-            {props.routineFormData.exercises.map((exercise, index) => (
-                <div key={index}>
-                    <div className="exercise-item-container">
-                        <img src={dragIcon} className="drag-icon-container"/>
-                        <button 
-                            className={`exercise-button ${exercise.exerciseName && "set-exercise-button"}`}
-                            onClick={() => props.setExpandedExerciseIndex(props.expandedExerciseIndex === index ? null : index)}>
-                            <div>
-                                <img src={arrow} className={props.expandedExerciseIndex === index ? "exercise-btn-arrow rotated" : "exercise-btn-arrow"} />{exercise.exerciseName || `Exercise ${index + 1}`}
-                            </div>
-                            <div className="rate-trash-container">
-                                {exercise.exerciseName ? <div className="rate-container">{`+${exercise.progressionRate} ${exercise.unitType} / level`}</div> : <div className="not-set-container">{"not set"}</div>}
-                                { 
-                                    <div className="trash-icon-container">
-                                        <img src={trashIcon} className="trash-icon" onClick={() => deleteExercise(index)}/>
-                                    </div>
-                                }
-                            </div>
-                        </button>
-                    </div>
-                    
-                        <div className={props.expandedExerciseIndex === index ? "exercise-inputs-wrapper expanded" : "exercise-inputs-wrapper"}>
-                            <div>
-                                <label className="expanded-input-label" htmlFor={`exercise-name-${index}`}>
-                                    exercise name
-                                </label>
-                                <input
-                                    className="expanded-input"
-                                    id={`exercise-name-${index}`}
-                                    type="text"
-                                    value={exercise.exerciseName}
-                                    placeholder={`Exercise ${index + 1}`}
-                                    onChange={(e) => updateExercise(index, {
-                                        exerciseName: e.target.value,
-                                    })}
-                                />
-                            </div>
-                            <div className="second-row-inputs-wrapper">
+
+            <div className="live-editor-content-wrapper" ref={exerciseListRef}>
+                
+                {props.routineFormData.exercises.map((exercise, index) => (
+                    <div key={index} className="clickable-exercise-item">
+                        <div className="exercise-item-container">
+                            <img src={dragIcon} className="drag-icon-container"/>
+                            <button 
+                                className={`exercise-button ${exercise.exerciseName && "set-exercise-button"}`}
+                                onClick={() => props.setExpandedExerciseIndex(props.expandedExerciseIndex === index ? null : index)}>
                                 <div>
-                                    <label className="expanded-input-label" htmlFor={`exercise-unit-${index}`}>
-                                        exercise unit
-                                    </label>
-                                    <select 
-                                        className="expanded-input"
-                                        id={`exercise-unit-${index}`}
-                                        value={exercise.unitType}
-                                        onChange={(e) => 
-                                            updateExercise(index, {
-                                                unitType: e.target.value,
-                                            })
-                                    }>
-                                        <option value="reps">reps</option>
-                                        <option value="seconds">seconds</option>
-                                    </select>
+                                    <img src={arrow} className={props.expandedExerciseIndex === index ? "exercise-btn-arrow rotated" : "exercise-btn-arrow"} />{exercise.exerciseName || `Exercise ${index + 1}`}
                                 </div>
-                                <div className="progression-rate-input-wrapper">
-                                    <label className="expanded-input-label" htmlFor={`exercise-rate-${index}`}>
-                                    growth rate
+                                <div className="rate-trash-container">
+                                    {exercise.exerciseName ? <div className="rate-container">{`+${exercise.progressionRate}`} <span className="rate-supporting-text">{`${exercise.unitType} / level`}</span></div> : <div className="not-set-container">{"not set"}</div>}
+                                    { 
+                                        <div className="trash-icon-container">
+                                            <img src={trashIcon} className="trash-icon" onClick={() => deleteExercise(index)}/>
+                                        </div>
+                                    }
+                                </div>
+                            </button>
+                        </div>
+                        
+                            <div className={props.expandedExerciseIndex === index ? "exercise-inputs-wrapper expanded" : "exercise-inputs-wrapper"}>
+                                <div>
+                                    <label className="expanded-input-label" htmlFor={`exercise-name-${index}`}>
+                                        exercise name
                                     </label>
                                     <input
-                                        className="expanded-input progression-rate-input"
-                                        id={`exercise-rate-${index}`}
-                                        type="number"
-                                        step="0.25"
-                                        min="0.25"
-                                        value={exercise.progressionRate}
+                                        className="expanded-input"
+                                        id={`exercise-name-${index}`}
+                                        type="text"
+                                        value={exercise.exerciseName}
+                                        placeholder={`Exercise ${index + 1}`}
                                         onChange={(e) => updateExercise(index, {
-                                            progressionRate: Number(e.target.value),
+                                            exerciseName: e.target.value,
                                         })}
                                     />
                                 </div>
+                                <div className="second-row-inputs-wrapper">
+                                    <div>
+                                        <label className="expanded-input-label" htmlFor={`exercise-unit-${index}`}>
+                                            exercise unit
+                                        </label>
+                                        <select 
+                                            className="expanded-input"
+                                            id={`exercise-unit-${index}`}
+                                            value={exercise.unitType}
+                                            onChange={(e) => 
+                                                updateExercise(index, {
+                                                    unitType: e.target.value,
+                                                })
+                                        }>
+                                            <option value="reps">reps</option>
+                                            <option value="seconds">seconds</option>
+                                        </select>
+                                    </div>
+                                    <div className="progression-rate-input-wrapper">
+                                        <label className="expanded-input-label" htmlFor={`exercise-rate-${index}`}>
+                                        growth rate
+                                        </label>
+                                        <input
+                                            className="expanded-input progression-rate-input"
+                                            id={`exercise-rate-${index}`}
+                                            type="number"
+                                            step="0.25"
+                                            min="0.25"
+                                            value={exercise.progressionRate}
+                                            onChange={(e) => updateExercise(index, {
+                                                progressionRate: Number(e.target.value),
+                                            })}
+                                        />
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    
-                </div>
-            ))}
+                        
+                    </div>
+                ))}
+            </div>
             <button className="add-exercise-btn" onClick={addExercise}>+ Add Exercise</button>
         </div>
 
         <div className="wizard-save-btns-wrapper">
-            <button className="routine-main-button"  onClick={() => console.log("running save routine function")}>Save Routine</button>
+            <button className="routine-main-button"  onClick={() => saveRoutine()}>Save Routine</button>
             <button className="routine-cancel-btn" onClick={props.handleCancelClick}>cancel</button>
         </div>
         {/* <button onClick={() => console.log(props.routineFormData)}>temp log form data button</button> */}

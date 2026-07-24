@@ -20,7 +20,6 @@ export default function CustomizeDailyRoutine() {
     const [setupStep, setSetupStep] = useState(null)
     const [currentModeSelectionTitle, setCurrentModeSelectionTitle] = useState(null)
     const [expandedExerciseIndex, setExpandedExerciseIndex] = useState(null)
-    const [formErrors, setFormErrors] = useState([])
 
     const hasRoutine = currentProfile?.currentDailyRoutine.length > 0
 
@@ -34,6 +33,8 @@ export default function CustomizeDailyRoutine() {
         useSuggestedRoutine: null,
         exercises: []
     })
+    const [formErrors, setFormErrors] = useState([])
+
 
     const handleTempFormDataChange = (e) => {
         const { name, value } = e.target
@@ -47,6 +48,7 @@ export default function CustomizeDailyRoutine() {
     const handleCancelClick = () => {
         setIsEditing(false)
         setExpandedExerciseIndex(null)
+        setFormErrors([])
         setRoutineFormData({
             mode: "",
             useSuggestedRoutine: null,
@@ -61,13 +63,33 @@ export default function CustomizeDailyRoutine() {
             unitType: "reps"
         },
         {
-            exerciseName: "Sit Ups",
+            exerciseName: "Crunches",
             progressionRate: 1,
             unitType: "reps"
         },
         {
             exerciseName: "Leg Lifts",
             progressionRate: 1,
+            unitType: "reps"
+        },
+        {
+            exerciseName: "Scissor Kicks",
+            progressionRate: 1,
+            unitType: "reps"
+        },
+        {
+            exerciseName: "Pull Ups",
+            progressionRate: .5,
+            unitType: "reps"
+        },
+        {
+            exerciseName: "Plank",
+            progressionRate: 1.5,
+            unitType: "seconds"
+        },
+        {
+            exerciseName: "Burpies",
+            progressionRate: .5,
             unitType: "reps"
         }
     ]
@@ -108,6 +130,9 @@ export default function CustomizeDailyRoutine() {
                             setRoutineFormData={setRoutineFormData}
                             expandedExerciseIndex={expandedExerciseIndex}
                             setExpandedExerciseIndex={setExpandedExerciseIndex}
+                            formErrors={formErrors}
+                            setFormErrors={setFormErrors}
+                            suggestedExercisesSeed={suggestedExercisesSeed}
                         />
 
                     default:
@@ -115,9 +140,6 @@ export default function CustomizeDailyRoutine() {
 
                 }
             }
-
-
-
 
     return (
         <div className='routine-wrapper'>
