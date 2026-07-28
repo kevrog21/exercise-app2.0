@@ -7,6 +7,18 @@
     padding: 0 0 1em 0;
 }
 
+.routine-preview-wrapper {
+    width: 100%;
+    height: 75%;
+    display: flex;
+    flex-direction: column;
+}
+
+.title-text-wrapper {
+    width: 100%;
+    text-align: center;
+}
+
 .routine-card-title {
     background: #d9e6f4;
     color: #224151;
@@ -183,10 +195,20 @@
 
 .live-editor-list-and-labels-container {
     width: 100%;
-    height: 62%;
+    height: 70%;
     display: flex;
+    margin: 1em 0 0 0;
     flex-direction: column;
     align-items: center;
+    overflow: hidden;
+}
+
+.preview-light {
+    color: #628191;
+}
+
+.preview-dark {
+    color: black;
 }
 
 .live-editor-labels-container {
@@ -200,8 +222,9 @@
     margin: 0 1.25rem 0 auto;
 }
 
-.live-editor-content-wrapper {
-    height: 80%;
+.live-editor-content-wrapper,
+.preview-content-wrapper {
+    height: 75%;
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -213,6 +236,22 @@
     font-size: .9rem;
     line-height: 1.3em;
     color: #4c6f84;
+}
+
+.preview-content-wrapper {
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+}
+
+.exercise-preview-item {
+    margin: 0 auto;
+    padding: .75em 0;
+    border-top: 2px solid #bfd3ec;
+    width: 85%;
+    display: flex;
+    justify-content: space-between;
+    
 }
 
 .clickable-exercise-item {

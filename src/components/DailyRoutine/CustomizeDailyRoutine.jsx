@@ -8,7 +8,6 @@ import "../../styles/pageStyles/dailyRoutineStyles.css"
 export default function CustomizeDailyRoutine() {
 
     const { currentProfile, isLoading } = useFitnessProfileContext()
-    const [formData, setFormData] = useState(null)
     const [isEditing, setIsEditing] = useState(false)
 
     const SETUP_STEPS = {
@@ -49,12 +48,33 @@ export default function CustomizeDailyRoutine() {
         setIsEditing(false)
         setExpandedExerciseIndex(null)
         setFormErrors([])
-        setRoutineFormData({
-            mode: "",
-            useSuggestedRoutine: null,
-            exercises: []
+        if (hasRoutine) {
+            setRoutineFormData({
+                mode: currentProfile.challengeMode,
+                useSuggestedRoutine: false,
+                exercises: currentProfile.currentDailyRoutine
+            })
+        } else {
+            setRoutineFormData({
+                mode: "",
+                useSuggestedRoutine: null,
+                exercises: []
         })
+        }
     }
+
+    useEffect(() => {
+
+        if (!currentProfile) return
+
+        if (hasRoutine) {
+            setRoutineFormData({
+                mode: currentProfile.challengeMode,
+                useSuggestedRoutine: false,
+                exercises: currentProfile.currentDailyRoutine
+            })
+        }
+    }, [currentProfile, hasRoutine])
 
     const suggestedExercisesSeed = [
         {
@@ -141,10 +161,35 @@ export default function CustomizeDailyRoutine() {
                 }
             }
 
+    if (hasRoutine && isEditing) {
+        switch (setupStep) {
+             case SETUP_STEPS.EDITOR:
+                        return <DailyRoutineLiveEditor 
+                            SETUP_STEPS={SETUP_STEPS}
+                            setupStep={setupStep}
+                            setSetupStep={setSetupStep}
+                            handleCancelClick={handleCancelClick}
+                            routineFormData={routineFormData}
+                            setRoutineFormData={setRoutineFormData}
+                            expandedExerciseIndex={expandedExerciseIndex}
+                            setExpandedExerciseIndex={setExpandedExerciseIndex}
+                            formErrors={formErrors}
+                            setFormErrors={setFormErrors}
+                            suggestedExercisesSeed={suggestedExercisesSeed}
+                        />
+
+                    default:
+                        return null
+        }
+    }
+
     return (
         <div className='routine-wrapper'>
-            <h2 className="routine-card-title">Current Routine</h2>
-            <p className="text-small routine-explainer-text">These are the exercises you'll complete each day as your level increases.</p>
+            <div className="title-text-wrapper">
+                <h2 className="routine-card-title">Current Routine</h2>
+                <p className="text-small routine-explainer-text">These are the exercises you'll complete each day as your level increases.</p>
+            </div>
+            
 
             {!hasRoutine && !isEditing &&
                 <div className="routine-empty-state">
@@ -155,12 +200,54 @@ export default function CustomizeDailyRoutine() {
                 </div>
             }
 
-            <button 
-                className="routine-main-button"
-                onClick={() => {
-                    setIsEditing(true)
-                    setSetupStep(SETUP_STEPS.MODE)
-            }}>Create Routine</button>
+            {hasRoutine && !isEditing &&
+
+            <div className="routine-preview-wrapper">
+
+                <div className="mode-progress-section-wrapper">
+                    <p>Mode</p>
+                    <h3>{currentProfile.challengeMode}</h3>
+                </div>
+                
+                <div className="preview-list-and-labels-container">
+
+                    <div className="live-editor-labels-container">
+                        <p className="live-editor-label-left">exercise name</p>
+                        <p className="live-editor-label-right">growth rate</p>
+                    </div>
+
+                    <div className="preview-content-wrapper">
+                        {currentProfile?.currentDailyRoutine.map((exercise, index) => (
+                            <div key={index}>
+                                <div className="exercise-preview-item">
+                                    <div>
+                                        <span className="preview-light">{index + 1}</span>. <span className="preview-dark">{exercise.exerciseName}</span>
+                                    </div>
+                                    <div>
+                                        <span className="preview-light">+</span> <span className="preview-dark">{exercise.progressionRate}</span> <span className="preview-light">{exercise.unitType} / level</span>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+
+
+                    </div>
+
+                    
+
+                </div>
+
+            </div>}
+
+
+            {!isEditing &&
+                <button 
+                    className="routine-main-button"
+                    onClick={() => {
+                        setIsEditing(true)
+                        hasRoutine ? setSetupStep(SETUP_STEPS.EDITOR) : setSetupStep(SETUP_STEPS.MODE)
+                }}>{hasRoutine ? "Edit" : "Create"} Routine</button>
+            }
 
             {/* <button onClick={() => console.log(routineFormData)}>temp log form data button</button> */}
 

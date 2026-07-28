@@ -16,7 +16,6 @@ export default function Login() {
         }
 
         const userData = await loginService({email, password})
-        console.log("here is the userData (what is returned fom login function)", userData)
         loginAuth(userData)
         navigate("/dashboard")
     }

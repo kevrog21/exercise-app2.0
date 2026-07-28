@@ -2,6 +2,8 @@ import { useEffect, useState, useRef } from "react"
 
 import "../../styles/pageStyles/dailyRoutineStyles.css"
 
+import { postDailyRoutine } from "../../services/userProfileSettings.service"
+
 import trashIcon from "../../assets/trash-icon.svg"
 import arrow from "../../assets/arrow-icon.svg"
 import dragIcon from "../../assets/drag-icon.svg"
@@ -12,6 +14,7 @@ import ErrorMessage from "../ErrorMessage"
 export default function DailyRoutineLiveEditor(props) {
 
     const [ hasAnimatedSuggestedRoutine, setHasAnimatedSuggestedRoutine] = useState(false)
+    const [ isSaving, setIsSaving ] = useState(false)
     const exerciseListRef = useRef(null)
 
     useEffect(() => {
@@ -179,15 +182,32 @@ export default function DailyRoutineLiveEditor(props) {
     const saveRoutine = async () => {
 
         const validation = validateFormData()
-        console.log("errors", validation.errors)
 
         if (!validation.isValid) {
             return
         }
 
-        console.log("form data", props.routineFormData)
+        try {
+            setIsSaving(true)
 
-        // send request
+            await postDailyRoutine(payload) 
+
+            console.log("routine saved successfully")
+            props.handleCancelClick()
+        } catch (err) {
+            console.error(err)
+            props.setFormErrors([
+                err.message || "Something went wrong while saving your routine.",
+            ])
+        } finally {
+            setIsSaving(false);
+        }
+
+        console.log("form data", props.routineFormData)
+        console.log("payload", payload)
+
+        
+
     }
     
     
@@ -213,7 +233,7 @@ export default function DailyRoutineLiveEditor(props) {
                                     mode: e.target.value,
                                 }))
                             }}>
-                            <option value="weigthed">Weighted Triad </option>
+                            <option value="weighted">Weighted Triad </option>
                             <option value="tiers">Tiers</option>
                             <option value="steady_increase">Steady Increase</option>
                         </select>
@@ -311,7 +331,7 @@ export default function DailyRoutineLiveEditor(props) {
         </div>
 
         <div className="wizard-save-btns-wrapper">
-            <button className="routine-main-button"  onClick={() => saveRoutine()}>Save Routine</button>
+            <button className="routine-main-button" disabled={isSaving} onClick={() => saveRoutine()}>Save Routine</button>
             <button className="routine-cancel-btn" onClick={props.handleCancelClick}>cancel</button>
         </div>
         {/* <button onClick={() => console.log(props.routineFormData)}>temp log form data button</button> */}
