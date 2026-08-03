@@ -21,7 +21,7 @@ export default function UserMainDashboard() {
                 <p>level: {currentProfile?.currentLevel}</p>
                 <p>streak: {currentProfile?.currentStreak}</p>
                 <br></br>
-                <p>go to today's challenge page -</p>
+                <Link to="/todays-challenge">go to today's challenge page</Link>
                 <p>start a new workout -</p>
                 <Link to="/edit-daily-routine">customize daily routine</Link>
             </div>

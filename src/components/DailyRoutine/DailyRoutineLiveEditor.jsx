@@ -3,6 +3,7 @@ import { useEffect, useState, useRef } from "react"
 import "../../styles/pageStyles/dailyRoutineStyles.css"
 
 import { postDailyRoutine } from "../../services/userProfileSettings.service"
+import { useFitnessProfileContext } from "../../context/FitnessProfileContext.jsx"
 
 import trashIcon from "../../assets/trash-icon.svg"
 import arrow from "../../assets/arrow-icon.svg"
@@ -16,6 +17,7 @@ export default function DailyRoutineLiveEditor(props) {
     const [ hasAnimatedSuggestedRoutine, setHasAnimatedSuggestedRoutine] = useState(false)
     const [ isSaving, setIsSaving ] = useState(false)
     const exerciseListRef = useRef(null)
+    const { setProfile } = useFitnessProfileContext()
 
     useEffect(() => {
         const timers = []
@@ -190,7 +192,9 @@ export default function DailyRoutineLiveEditor(props) {
         try {
             setIsSaving(true)
 
-            await postDailyRoutine(payload) 
+            const updatedProfile = await postDailyRoutine(payload)
+
+            setProfile(updatedProfile.profile)
 
             console.log("routine saved successfully")
             props.handleCancelClick()
@@ -203,11 +207,8 @@ export default function DailyRoutineLiveEditor(props) {
             setIsSaving(false);
         }
 
-        console.log("form data", props.routineFormData)
-        console.log("payload", payload)
-
-        
-
+        // console.log("form data", props.routineFormData)
+        // console.log("payload", payload)
     }
     
     

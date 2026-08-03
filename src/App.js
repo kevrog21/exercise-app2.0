@@ -10,6 +10,7 @@ import Login from "./components/Auth/Login"
 import SignUp from "./components/Auth/SignUp"
 import UserMainDashboard from "./components/UserMainDashboard.jsx"
 import CustomizeDailyRoutine from "./components/DailyRoutine/CustomizeDailyRoutine.jsx"
+import TodaysDailyChallenge from "./components/TodaysDailyChallenge/TodaysDailyChallenge.jsx"
 
 import ProtectedRoute from "./routes/ProtectedRoutes"
 
@@ -31,6 +32,7 @@ function App() {
         <Route element={<AppLayout />}>
           <Route path='/dashboard' element={<UserMainDashboard />}/>
           <Route path='/edit-daily-routine' element={<CustomizeDailyRoutine />}/>
+          <Route path='/todays-challenge' element={<TodaysDailyChallenge />}/>
         </Route>
       </Route>
 

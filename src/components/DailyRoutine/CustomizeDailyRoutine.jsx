@@ -22,27 +22,12 @@ export default function CustomizeDailyRoutine() {
 
     const hasRoutine = currentProfile?.currentDailyRoutine.length > 0
 
-    const [tempFormData, setTempFormData] = useState({
-            pword: '',
-            honeyp: ''
-        })
-
     const [routineFormData, setRoutineFormData] = useState({
         mode: "",
         useSuggestedRoutine: null,
         exercises: []
     })
     const [formErrors, setFormErrors] = useState([])
-
-
-    const handleTempFormDataChange = (e) => {
-        const { name, value } = e.target
-        
-        setTempFormData((prevFormData) => ({
-            ...prevFormData,
-            [name]: value
-        }))
-    }
 
     const handleCancelClick = () => {
         setIsEditing(false)
@@ -113,6 +98,13 @@ export default function CustomizeDailyRoutine() {
             unitType: "reps"
         }
     ]
+
+    const challengeModeLabels = {
+        steady_increase: "Steady Increase",
+        weighted: "Weighted Triad",
+        tiers: "Tier System",
+        own_pace: "Your Own Pace"
+    }
 
 
     if (!hasRoutine && isEditing) {
@@ -206,7 +198,7 @@ export default function CustomizeDailyRoutine() {
 
                 <div className="mode-progress-section-wrapper">
                     <p>Mode</p>
-                    <h3>{currentProfile.challengeMode}</h3>
+                    <h3>{challengeModeLabels[currentProfile.challengeMode] ?? currentProfile.challengeMode}</h3>
                 </div>
                 
                 <div className="preview-list-and-labels-container">
@@ -241,12 +233,14 @@ export default function CustomizeDailyRoutine() {
 
 
             {!isEditing &&
+            <div>
                 <button 
                     className="routine-main-button"
                     onClick={() => {
                         setIsEditing(true)
                         hasRoutine ? setSetupStep(SETUP_STEPS.EDITOR) : setSetupStep(SETUP_STEPS.MODE)
                 }}>{hasRoutine ? "Edit" : "Create"} Routine</button>
+                </div>
             }
 
             {/* <button onClick={() => console.log(routineFormData)}>temp log form data button</button> */}

@@ -20,6 +20,11 @@ export default function ChooseRoutineMode(props) {
             value: "steady_increase",
             title: "Steady Increase",
             description: "Each exercises increase steadily from level 1 to 300."
+        },
+        {
+            value: "own_pace",
+            title: "Your Own Pace",
+            description: "You decide when you are ready to move up to the next level. You will choose how many reps to start at and when it's time to move on."
         }
     ]
 

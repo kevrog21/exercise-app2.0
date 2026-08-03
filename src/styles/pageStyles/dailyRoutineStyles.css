@@ -211,7 +211,8 @@
     color: black;
 }
 
-.live-editor-labels-container {
+.live-editor-labels-container,
+.todays-challenge-labels-container {
     display: flex;
     width: 82%;
     margin: 0 auto;
@@ -222,8 +223,13 @@
     margin: 0 1.25rem 0 auto;
 }
 
+.todays-challenge-label-right {
+    margin: 0 2.5% 0 auto;
+}
+
 .live-editor-content-wrapper,
-.preview-content-wrapper {
+.preview-content-wrapper,
+.todays-challenge-content-wrapper {
     height: 75%;
     width: 100%;
     display: flex;
@@ -231,17 +237,26 @@
     justify-content: flex-start;
     margin: .15em auto 0 auto;
     padding: 0 .25em 0 .5em;
-    overflow-y: scroll;
+    overflow-y: auto;
     border-radius: 8px;
     font-size: .9rem;
     line-height: 1.3em;
     color: #4c6f84;
+    scrollbar-gutter: stable;
+}
+
+.todays-challenge-content-wrapper {
+   height: 100%;
 }
 
 .preview-content-wrapper {
     width: 100%;
     height: 100%;
     overflow: auto;
+}
+
+.preview-list-and-labels-wrapper {
+    overflow: hidden;
 }
 
 .exercise-preview-item {
@@ -256,14 +271,14 @@
 
 .clickable-exercise-item {
     opacity: 0;
-    transform: translateY(10px);
+    transform: scale(.95);
     animation: fadeIn .5s forwards;
 }
 
 @keyframes fadeIn {
     to {
         opacity: 1;
-        transform: translateY(0);
+        transform: scale(1);
     }
 }
 
@@ -286,6 +301,11 @@
     margin: .18em;
     border: 2px solid #cbdcef;
     transition: .35s all ease;
+}
+
+.todays-challenge-content-wrapper .exercise-button {
+    width: 90%;
+    margin: .18em .18em .18em 5%;
 }
 
 .exercise-button > :first-child,
@@ -410,6 +430,195 @@
 .text-small {
   font-size: .85rem;
 }
+
+/* today's challenge styles */
+
+.challenge-exercise-item-container {
+    
+}
+
+.challenge-inputs-box-wrapper {
+    width: 82%;
+    opacity: 1;
+    transition: all .25s ease;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    min-height: 200px;
+    border: 1px solid #bdcfe0;
+    border-radius: 6px;
+    transition: height 1s ease;
+}
+
+.challenge-inputs-box-wrapper.expanded {
+    opacity: 1;
+    margin: 1em auto;
+    max-height: auto;
+}
+
+.challenge-inputs-top-flex-container {
+    display: flex;
+    padding: .75rem 1rem;
+    background: #e4f0f9;
+}
+
+.challenge-label {
+    font-size: .8rem;
+    color: #596d9b;
+}
+
+.current-reps-wrapper {
+    padding: 0 1rem 0 0;
+}
+
+.expanded-current-reps {
+    font-size: 2rem;
+    line-height: 2.25rem;
+    font-weight: bold;
+    color: black;
+}
+
+.expanded-current-text {
+    font-size: 1.1rem;
+}
+
+.previous-sets-wrapper {
+    padding: 0 0 0 1rem;
+    border-left: 1px solid #d6e2ed;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.previous-sets-list-wrapper {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: .25rem;
+    width: 100%;
+    overflow-Y: auto;
+}
+
+.previous-sets-list-item {
+    font-size: .65rem;
+    background: #bed7ed;
+    border: 1px solid #a8c4e2;
+    border-radius: 999px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 50%;
+    margin: auto 0;
+}
+
+.previous-sets-list-wrapper.multi-row
+.previous-sets-list-item {
+    height: 90%;
+    margin: .25em 0 0 0;
+}
+
+.exercise-progress-bar-container {
+    height: 4px;
+    width: 100%;
+    margin: 0 auto;
+    background: red;
+    border-radius: 8px;
+}
+
+.exercise-progress-bar {
+    background: #75c64f;
+    width: 50%;
+    height: 100%;
+    border-radius: 0 8px 8px 0;
+}
+
+.challenge-inputs-box-bottom {
+    padding: .75rem 1rem;
+}
+
+.quick-add-wrapper {
+    border-bottom: 1px solid #d6e2ed;
+    padding-bottom: .4rem;
+    margin: 0 0 .5rem 0;
+}
+
+.quick-add-row {
+    display: flex;
+    align-items: flex-end;
+}
+
+.quick-add-buttons {
+    flex: 1;
+    display: grid;
+    grid-template-columns:repeat(6,1fr);
+    gap: .5rem;
+    padding: 0 .65rem .5rem 0;
+}
+
+.quick-add-item {
+    width: 100%;
+    color: #596d9b;
+    border: 1px solid #596d9b;
+    background: #f0faff;
+    border-radius: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    padding: .1rem 0;
+}
+
+.remainder-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-left: 1px solid #d6e2ed;
+    padding: 0 0 .5rem .65rem;
+}
+
+.remainder-label {
+    font-size: .62rem;
+    margin-bottom: .3rem;
+    text-align: center;
+    line-height: .62rem;
+    height: .2rem;
+    transform: translateY(-150%)
+}
+
+.remainder-button {
+    width: 100%;
+    background: #e4f0f9;
+}
+
+.custom-input-container {
+    padding: .35rem 0 0 0;
+    display: flex;
+    align-items: center;
+}
+
+#custom-input {
+    padding: .2rem .5rem;
+    width: 25%;
+    border-radius: 4px;
+    border: 1px solid #7d9ac9;
+}
+
+#custom-input::placeholder {
+    color: #9e9e9e;
+}
+
+.custom-reps-btn {
+    background: #5973a5;
+    color: white;
+    font-size: .8rem;
+    border-radius: 3px;
+    margin: 0 0 0 .5rem;
+    border: none;
+    padding: .2rem 1rem;
+}
+
+/* error styles */
 
 .error-message-container {
     color: #cd1f1f;
