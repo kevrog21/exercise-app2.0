@@ -1,4 +1,5 @@
-.routine-wrapper {
+.routine-wrapper,
+.challenge-wrapper {
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -19,7 +20,8 @@
     text-align: center;
 }
 
-.routine-card-title {
+.routine-card-title,
+.challenge-card-title {
     background: #d9e6f4;
     color: #224151;
     font-size: 1.5em;
@@ -99,7 +101,8 @@
 
 .wizard-save-btns-wrapper {
     display: flex;
-    flex-direction: column;}
+    flex-direction: column;
+}
 
 .mode-progress-section-wrapper {
     height: 3.5em;
@@ -433,8 +436,29 @@
 
 /* today's challenge styles */
 
-.challenge-exercise-item-container {
-    
+.lvl-display-wrapper {
+    text-align: center;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    margin: 1rem 0 0 0;
+}
+
+.mode-display {
+    text-align: right;
+    padding: 0 1rem 0 0;
+    font-size: .75rem;
+    color: #9a9a9a;
+}
+
+.challenge-lvl-txt {
+    line-height: 1rem;
+    color: #66869e;
+}
+
+.challenge-number-txt {
+    font-size: 3rem;
+    line-height: 2.5rem;
 }
 
 .challenge-inputs-box-wrapper {
@@ -522,7 +546,7 @@
     height: 4px;
     width: 100%;
     margin: 0 auto;
-    background: red;
+    background: #d32222;
     border-radius: 8px;
 }
 
@@ -616,6 +640,12 @@
     margin: 0 0 0 .5rem;
     border: none;
     padding: .2rem 1rem;
+}
+
+.challenge-save-btns-wrapper {
+    display: flex;
+    flex-direction: column;
+    margin: 1rem 0 0 0;
 }
 
 /* error styles */
