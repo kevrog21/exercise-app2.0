@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect } from "react"
 import { useFitnessProfileContext } from "../../context/FitnessProfileContext.jsx"
 
+import { postDailyChallenge } from "../../services/dailyChallenge.service"
+
 import ErrorMessage from "../ErrorMessage"
 import arrow from "../../assets/arrow-icon.svg"
 
@@ -10,18 +12,18 @@ export default function TodaysDailyChallenge() {
     const { currentProfile, setProfile, isLoading } = useFitnessProfileContext()
 
     const [expandedExerciseIndex, setExpandedExerciseIndex] = useState(null)
+    const [challengeFormData, setChallengeFormData] = useState(null)
     const [formErrors, setFormErrors] = useState([])
 
     const exerciseListRef = useRef(null)
 
     const [customInputValue, setCustomInputValue] = useState({})
 
-    const [challengeFormData, setChallengeFormData] = useState(null)
-
     const buildChallengeFromRoutine = (profile) => ({
         challengeDate: new Date(),
 
         level: profile.currentLevel,
+        // level: 55,
 
         challengeMode: profile.challengeMode,
 
@@ -29,7 +31,8 @@ export default function TodaysDailyChallenge() {
 
         exercises: profile.currentDailyRoutine.map(exercise => ({
             exerciseName: exercise.exerciseName,
-            targetAmount: profile.currentLevel * exercise.progressionRate,
+            targetAmount: Math.ceil(profile.currentLevel * exercise.progressionRate),
+            // targetAmount: Math.ceil(55 * exercise.progressionRate),
             completedAmount: 0,
             completedSets: [],
             progressionRate: exercise.progressionRate,
@@ -62,6 +65,11 @@ export default function TodaysDailyChallenge() {
     const addCompletedSet = (exerciseIndex, reps) => {
 
         const exercise = challengeFormData.exercises[exerciseIndex]
+
+        if (reps > exercise.targetAmount - exercise.completedAmount) {
+            console.log("can't do that")
+            return
+        }
 
         const newCompletedSets = [
             ...exercise.completedSets,
@@ -136,6 +144,92 @@ export default function TodaysDailyChallenge() {
     }
 
 
+
+    const validateFormData = () => {
+        const errors = []
+
+        if (challengeFormData.exercises.length === 0) {
+            errors.push("There are no exercises in today's challenge.")
+        }
+
+        challengeFormData.exercises.forEach((exercise, index) => {
+            if (!exercise.exerciseName) {
+                errors.push(`Exercise ${index + 1} is missing a name.`)
+            }
+
+            if (exercise.completedAmount < 0) {
+                errors.push(`${exercise.exerciseName} has an invalid completed amount.`)
+            }
+
+            if (exercise.completedAmount > exercise.targetAmount) {
+                errors.push(
+                    `${exercise.exerciseName} exceeds the target amount.`
+                )
+            }
+        })
+
+        setFormErrors(errors)
+
+        return {
+            isValid: errors.length === 0,
+            errors,
+        }
+    }
+
+
+    
+
+    const saveChallenge = async () => {
+        const validation = validateFormData()
+
+        const payload = {
+            challengeDate: challengeFormData.challengeDate,
+            level: challengeFormData.level,
+            challengeMode: challengeFormData.challengeMode,
+            notes: challengeFormData.notes,
+
+            exercises: challengeFormData.exercises.map(exercise => ({
+                exerciseName: exercise.exerciseName,
+                targetAmount: exercise.targetAmount,
+                completedAmount: exercise.completedAmount,
+                completedSets: exercise.completedSets,
+                progressionRate: exercise.progressionRate,
+                unitType: exercise.unitType,
+                isComplete: exercise.isComplete,
+            }))
+        }
+
+        console.log("payload!", payload)
+
+        if (!validation.isValid) {
+            return
+        }
+
+        try {
+            const savedChallenge = await postDailyChallenge(payload)
+
+            console.log("challenge saved!", saveChallenge)
+        } catch (err) {
+
+            console.error(err);
+
+            setFormErrors([
+                err.response?.data?.message ??
+                "Failed to save challenge."
+            ]);
+        }
+    }
+    
+
+
+
+
+
+
+
+
+
+
     if (isLoading || !challengeFormData) {
         return (
             <div>Loading skeleton component here...</div>
@@ -166,7 +260,11 @@ export default function TodaysDailyChallenge() {
                         
                         {challengeFormData?.exercises.map((exercise, index) => {
 
-                            const quickAdds = getQuickAddAmounts(exercise);
+                            const quickAdds = getQuickAddAmounts(exercise)
+                            const progressPercent = Math.min(
+                                (exercise.completedAmount / exercise.targetAmount) * 100,
+                                100
+                            )
 
                             return (<div key={index} className="clickable-exercise-item">
                                 <div className="challenge-exercise-item-container">
@@ -184,7 +282,7 @@ export default function TodaysDailyChallenge() {
                                 
                                     <div className={expandedExerciseIndex === index ? "challenge-inputs-box-wrapper expanded" : "exercise-inputs-wrapper"}>
                                         <div className="challenge-inputs-box-top">
-                                            <div className="challenge-inputs-top-flex-container">
+                                            <div className={`challenge-inputs-top-flex-container ${exercise.targetAmount - exercise.completedAmount <= 0 && "completed"}`}>
                                                 <div className="current-reps-wrapper">
                                                     <div className="challenge-label">Current</div>
                                                     <div className="expanded-current-text"><span className="expanded-current-reps">{challengeFormData.exercises[index].completedAmount}</span> / {challengeFormData.exercises[index].targetAmount}</div>
@@ -198,8 +296,9 @@ export default function TodaysDailyChallenge() {
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div className="exercise-progress-bar-container">
-                                                <div className="exercise-progress-bar"></div>
+                                            <div className={`exercise-progress-bar-container ${exercise.completedAmount <= 0 && "default"}`}>
+                                                <div className={`exercise-progress-bar ${exercise.targetAmount - exercise.completedAmount <= 0 && "completed"}`}
+                                                    style={{ width: `${progressPercent}%` }}></div>
                                             </div>
                                         </div>
                                         <div className="challenge-inputs-box-bottom">
@@ -215,6 +314,7 @@ export default function TodaysDailyChallenge() {
                                                                     addCompletedSet(index, amount)
                                                                 }
                                                                 className="quick-add-item"
+                                                                disabled={amount > (challengeFormData.exercises[index].targetAmount - challengeFormData.exercises[index].completedAmount)}
                                                             >
                                                                 +{amount}
                                                             </button>
@@ -227,6 +327,7 @@ export default function TodaysDailyChallenge() {
                                                             onClick={() =>
                                                                 addCompletedSet(index, quickAdds[6])
                                                             }
+                                                            disabled={quickAdds[6] < 1}
                                                         >+{quickAdds[6]}</button>
                                                     </div>
                                                 </div>
@@ -237,10 +338,12 @@ export default function TodaysDailyChallenge() {
                                                 <div className="custom-input-container">
                                                     <input id="custom-input"
                                                         id={`custom-input-${index}`}
+                                                        className="custom-input"
                                                         type="number"
                                                         min="1"
                                                         placeholder="Enter reps"
                                                         value={customInputValue[index] || ""}
+                                                        disabled={exercise.targetAmount - exercise.completedAmount <= 0}
                                                         onChange={(e) => handleCustomChange(index, e.target.value)}
                                                         onKeyDown={(e) => {
                                                             if (e.key === "Enter") {
@@ -248,8 +351,9 @@ export default function TodaysDailyChallenge() {
                                                             }
                                                         }}
                                                     />
-                                                    <button className="custom-reps-btn"
+                                                    <button
                                                         className="custom-reps-btn"
+                                                        disabled={exercise.targetAmount - exercise.completedAmount <= 0}
                                                         onClick={() => handleCustomSubmit(index)}>+ Add</button>
                                                 </div>
                                             </div>
@@ -263,7 +367,7 @@ export default function TodaysDailyChallenge() {
                 </div>
         
                 <div className="challenge-save-btns-wrapper">
-                    <button className="routine-main-button" disabled={true} onClick={() => {}}>Submit</button>
+                    <button className="routine-main-button" disabled={false} onClick={() => saveChallenge()}>Submit</button>
                     <button className="routine-cancel-btn" onClick={() => {}}>cancel</button>
                 </div>
 
