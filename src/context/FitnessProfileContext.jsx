@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react'
-import { getCurrentUserSettingsService } from "../services/userProfileSettings.service"
+import { getCurrentUserSettingsService, updateTimezoneService } from "../services/userProfileSettings.service"
 import { useAuth } from "./AuthContext.jsx"
 
 const FitnessProfileContext = createContext()
@@ -13,7 +13,16 @@ export function FitnessProfileProvider({ children }) {
         const getProfileData = async () => {
             try {
                 const profile = await getCurrentUserSettingsService()
-                setProfile(profile)
+
+                const currentTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone
+
+                if (profile.timezone !== currentTimezone) {
+                    const updatedProfile = await updateTimezoneService(currentTimezone)
+
+                    setProfile(updatedProfile)
+                } else {
+                    setProfile(profile)
+                }
             } catch (err) {
                 console.error("Failed to load profile:", err)
             } finally {

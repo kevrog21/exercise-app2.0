@@ -1,29 +1,36 @@
 import { useState, useRef, useEffect } from "react"
 import { useFitnessProfileContext } from "../../context/FitnessProfileContext.jsx"
+import { useNavigate, Link } from "react-router-dom"
 
 import { postDailyChallenge } from "../../services/dailyChallenge.service"
 
 import ErrorMessage from "../ErrorMessage"
 import arrow from "../../assets/arrow-icon.svg"
+import checkmark from "../../assets/checkmark.svg"
+import checkmarkGreen from "../../assets/checkmark-green.svg"
 
 
 export default function TodaysDailyChallenge() {
 
     const { currentProfile, setProfile, isLoading } = useFitnessProfileContext()
+    const navigate = useNavigate()
 
     const [expandedExerciseIndex, setExpandedExerciseIndex] = useState(null)
     const [challengeFormData, setChallengeFormData] = useState(null)
     const [formErrors, setFormErrors] = useState([])
+    const [isSaving, setIsSaving] = useState(false)
+    const [saveSuccess, setSaveSuccess] = useState(false)
 
     const exerciseListRef = useRef(null)
 
     const [customInputValue, setCustomInputValue] = useState({})
+    const challengeComplete = challengeFormData?.exercises?.length > 0 && challengeFormData.exercises.every(exercise => exercise.isComplete)
 
     const buildChallengeFromRoutine = (profile) => ({
         challengeDate: new Date(),
 
-        level: profile.currentLevel,
-        // level: 55,
+        // level: profile.currentLevel,
+        level: 55,
 
         challengeMode: profile.challengeMode,
 
@@ -31,8 +38,8 @@ export default function TodaysDailyChallenge() {
 
         exercises: profile.currentDailyRoutine.map(exercise => ({
             exerciseName: exercise.exerciseName,
-            targetAmount: Math.ceil(profile.currentLevel * exercise.progressionRate),
-            // targetAmount: Math.ceil(55 * exercise.progressionRate),
+            // targetAmount: Math.ceil(profile.currentLevel * exercise.progressionRate),
+            targetAmount: Math.ceil(55 * exercise.progressionRate),
             completedAmount: 0,
             completedSets: [],
             progressionRate: exercise.progressionRate,
@@ -48,8 +55,10 @@ export default function TodaysDailyChallenge() {
     }, [currentProfile])
 
     useEffect(() => {
-        console.log("challengeFormData ", challengeFormData)
+
+        
     }, [challengeFormData])
+
 
     const updateChallengeExercise = (exerciseIndex, updates) => {
         setChallengeFormData(current => ({
@@ -182,6 +191,8 @@ export default function TodaysDailyChallenge() {
     const saveChallenge = async () => {
         const validation = validateFormData()
 
+        // update user profile data with new level
+
         const payload = {
             challengeDate: challengeFormData.challengeDate,
             level: challengeFormData.level,
@@ -206,7 +217,18 @@ export default function TodaysDailyChallenge() {
         }
 
         try {
+
+            setIsSaving(true)
+
             const savedChallenge = await postDailyChallenge(payload)
+
+            setProfile(savedChallenge.profile)
+
+            setSaveSuccess(true)
+
+            setTimeout(() => {
+                navigate("/dashboard");
+            }, 900);
 
             console.log("challenge saved!", saveChallenge)
         } catch (err) {
@@ -269,10 +291,12 @@ export default function TodaysDailyChallenge() {
                             return (<div key={index} className="clickable-exercise-item">
                                 <div className="challenge-exercise-item-container">
                                     <button 
-                                        className={`exercise-button ${exercise.exerciseName && "set-exercise-button"}`}
+                                        className={`exercise-button ${exercise.exerciseName && "set-exercise-button"} ${progressPercent === 100 && "complete"}`}
                                         onClick={() => setExpandedExerciseIndex(expandedExerciseIndex === index ? null : index)}>
-                                        <div>
-                                            <img src={arrow} className={expandedExerciseIndex === index ? "exercise-btn-arrow rotated" : "exercise-btn-arrow"} />{exercise.exerciseName || `Exercise ${index + 1}`}
+                                        <div className="exercise-btn-left">
+                                            <img src={arrow} className={expandedExerciseIndex === index ? "exercise-btn-arrow rotated" : "exercise-btn-arrow"} />
+                                            <p className="">{exercise.exerciseName || `Exercise ${index + 1}`}</p>
+                                            <img src={checkmark} className={`completed-checkmark ${progressPercent === 100 && "showing"}`} />
                                         </div>
                                         <div className="rate-trash-container">
                                             <div className="not-set-container">{challengeFormData.exercises[index].completedAmount} / {challengeFormData.exercises[index].targetAmount}</div>
@@ -367,9 +391,14 @@ export default function TodaysDailyChallenge() {
                 </div>
         
                 <div className="challenge-save-btns-wrapper">
-                    <button className="routine-main-button" disabled={false} onClick={() => saveChallenge()}>Submit</button>
-                    <button className="routine-cancel-btn" onClick={() => {}}>cancel</button>
+                    <button className="routine-main-button" disabled={!challengeComplete} onClick={() => saveChallenge()}>Submit</button>
+                    <Link to="/dashboard" className="challenge-cancel-btn">cancel</Link>
                 </div>
+                
+                {saveSuccess && <div className="success-wrapper">
+                    <img src={checkmarkGreen} className="success-check" />
+                    <div className="success-message">Success!</div>
+                </div>}
 
             </div>
         )

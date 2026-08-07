@@ -1,5 +1,6 @@
 .routine-wrapper,
 .challenge-wrapper {
+    position: relative;
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -83,13 +84,21 @@
     color: #a7c0d8;
 }
 
-.routine-cancel-btn {
+.routine-cancel-btn,
+.challenge-cancel-btn {
     background: none;
     border: none;
     transition: .3s all ease;
+    text-decoration: none;
+    text-align: center;
 }
 
-.routine-cancel-btn:hover {
+.challenge-cancel-btn:hover {
+    text-decoration: none;
+}
+
+.routine-cancel-btn:hover,
+.challenge-cancel-btn:hover {
     letter-spacing: .05em;
 }
 
@@ -334,7 +343,9 @@
 
 .set-exercise-button {
     background: #e4f0f9;
-    border: 2px solid #a8c4e2;
+    border: 2px solid;
+    border-color: #a8c4e2;
+    transition: border-color .25s ease .75s;
 }
 
 .set-exercise-button:hover {
@@ -436,6 +447,39 @@
 
 /* today's challenge styles */
 
+.set-exercise-button.complete {
+    border-color: rgb(250, 189, 36);
+}
+
+.exercise-btn-left {
+    display: flex;
+}
+
+.completed-checkmark {
+    height: 1rem;
+    opacity: 0;
+    margin: 0 0 0 .5rem;
+    transform: translateY(15%);
+    transition: all .25s ease .75s;
+}
+
+.completed-checkmark.showing {
+    opacity: 1;
+    animation: popIn .25s ease .75s;
+    transition: opacity 0s ease 1s;
+}
+
+@keyframes popIn{
+    50% {
+        transform: translateY(15%) scale(1.5) ;
+    }
+
+    100% {
+        transform: translateY(15%) scale(1);
+        opacity: 1;
+    }
+}
+
 .lvl-display-wrapper {
     text-align: center;
     width: 100%;
@@ -484,16 +528,17 @@
     display: flex;
     padding: .75rem 1rem;
     background-color: #e4f0f9;
-    transition: background-color .05s ease-out .75s;
+    transition: background-color .1s ease-out .75s;
 }
 
 .challenge-inputs-top-flex-container.completed {
-    background-color: #ffbf00;
+    background-color: #d8e9f6;;
+    /* #d8e9f6; */
 }
 
 .challenge-label {
     font-size: .8rem;
-    color: #596d9b;
+    color: #445681;
 }
 
 .current-reps-wrapper {
@@ -568,7 +613,7 @@
 }
 
 .exercise-progress-bar.completed {
-    background: rgb(199, 142, 0);
+    background: rgb(250, 189, 36);
 }
 
 .challenge-inputs-box-bottom {
@@ -692,6 +737,26 @@
     display: flex;
     flex-direction: column;
     margin: 1rem 0 0 0;
+}
+
+.success-wrapper {
+    background: black;
+    z-index: 100;
+    background: rgba(0, 0, 0, 0.7);
+    position: absolute;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 3rem;
+    width: 100%;
+    color: white;
+    font-weight: bold;
+    flex-direction: column;
+}
+
+.success-check {
+    width: 2rem;
 }
 
 /* error styles */
